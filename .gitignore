@@ -1,12 +1,232 @@
-*.class
+* Course:   IT110 - Introduction to Programming*/
+import javax.swing.JOptionPane;
+import java.io.*;
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
 
-# Package Files #
-*.jar
-*.war
-*.ear
+/**
+ * @author Shamere Boyce 07/21/2015
+ */
+public class UltaBeautyPhase5 {
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args)
+	{
+
+		// declare variables
+		String openingMsg, nameInputMsg, customerName,orderInputMsg,  
+			   returnInputMsg, customerReturn, colorInputMsg, productQty, 
+			   customerOrder;
+		
+		
+		double salesTaxRate = 0.08;
+		double totalCost = 0;
+		Product products [] = new Product[3];
+		String productType;
+		
+		try
+		{
+		  // display opening message
+		  openingMsg = "*** Welcome to Ulta Beauty Online Ordering System ***\n"+ "                     "
+		  		+ "Experience the beautiful collections by Revlon's beauty essentials!";
+		  JOptionPane.showMessageDialog(null, openingMsg);
+
+		  // get required input using dialogs
+		  nameInputMsg   = "Please enter your name: ";
+		  customerName   = getStringInput(nameInputMsg);
+		  returnInputMsg = "Are you a returning Ulta Beauty customer (yes or no)? ";
+		  customerReturn = getYesNoInput(returnInputMsg);
+		  //orderInputMsg = "Which product do you wish to order? (lipstick, eyeshadow or nail polish)? ";
+		  //customerOrder = getStringInput(orderInputMsg);
+		 
+		  writeCustomerInfo(customerName, customerReturn);
+		  
+		  for (int i=0; i < 3; i++)
+		  {
+			  
+		      productType = getStringInput("Enter product type ('Lipstick' or 'Mascara')");
+		      
+		      if (productType.equals("Lipstick"))
+		      {
+		    	  products[i] = new Lipstick();
+		    	  products[i].setName("Lipstick");
+		    	  products[i].setCost(9.00);
+		      }
+		      else
+		      {
+		    	  products[i] = new Mascara();
+		    	  products[i].setName("Mascara");
+		    	  products[i].setCost(6.00);
+		      }
+		      
+		      products[i].setColor();
+	    	  products[i].setSize();
+	    	  products[i].setQuantity();
+	    
+		  //customerQty = Integer.parseInt(customerQuantity);
+		  //customerQty = getQuantityInput(customerQuantity);
+		  
+		  totalCost = totalCost(products[i].getQuantity(), products[i].getCost(), salesTaxRate);
+		  writeProductInfo(products[i].getColor(),products[i].getSize(),products[i].getQuantity(), totalCost);
+		  //String getColor;
+		  
+		}
+		confirmation();
+		 
+		}
+	    catch (Exception e)
+	    {
+	    	JOptionPane.showMessageDialog(null, e.getMessage());
+            System.exit(1);
+	    }
+		{
+			System.exit(0);
+		}
+	}    // end main()
+	
+
+	public static String getStringInput(String prompt) throws Exception
+	{
+		String inputValue;
+		int counter = 0;
+		
+		do
+		{
+			counter++; 
+			inputValue=JOptionPane.showInputDialog(prompt);
+			
+			if (inputValue == null)
+			{
+				throw new Exception("Cancel was selected, Leaving this application");
+			}
+			if (inputValue.equals("" ))
+			{
+				JOptionPane.showMessageDialog(null, "You have not made a selection, Please Try Again");
+			}
+			if (inputValue.equals("") && counter >= 3)
+			{
+				JOptionPane.showMessageDialog(null,"You have selected an invalid input; the program will now close, Goodbye.");
+				System.exit(3);
+			}
+		} while (inputValue.equals("") && counter < 3);
+	 
+		return inputValue;
+	}// end of getString method
+	
+	public static double totalCost(int number, double cost, double salesTaxRate) 
+	{
+		double total = 0;
+		total = cost * number;
+		total = total * (salesTaxRate + 1);
+		return total;
+	} // end of totalCost method
+	
+	// get quantity input method
+	
+	
+
+	// gets user yes or no input
+	public static String getYesNoInput(String prompt)throws Exception
+	{
+		String yesNoValue;
+		int counter = 0;
+		
+		do
+		{
+			counter++; 
+			yesNoValue=JOptionPane.showInputDialog(prompt);
+			
+			if (yesNoValue == null)
+		    {
+				//throw new Exception("You have not made a selection, Please Try Again");
+			}
+			if (!yesNoValue.equals("yes") && !yesNoValue.equals("no"))
+			{
+				throw new Exception("You must select yes or no, Please Try Again");
+			
+			}
+			if (yesNoValue.equals("") && counter >= 3)
+			{
+				JOptionPane.showMessageDialog(null,"You have selected an invalid input; the program will now close, Goodbye.");
+				System.exit(3);
+			}
+		} while (yesNoValue.equals("") && counter < 3);
+		
+		return yesNoValue;
+	    
+	} 
+	
+	
+	public static void writeCustomerInfo(String name, String returning)throws Exception
+	{
+		File f = new File("order.txt");
+		PrintWriter pw = new PrintWriter(f);
+	  	
+		pw.println(name);
+	  	pw.println(returning);
+	  	
+	  	pw.close();
+	}
+
+	
+	public static void writeProductInfo(String color, String size, int qty, double total)throws Exception
+    {
+  	  File f = new File("order.txt");
+  	  PrintWriter pw = new PrintWriter(f);
+  	  
+  	  pw.println(size);
+  	  pw.println(color);
+  	  pw.println(qty);
+  	  pw.println(total);
+  	  
+  	  pw.close();
+    }
+    
+    public static void confirmation() throws IOException
+    {
+  	  String openingMsg, nameInputMsg, customerName, nameOutputMsg,
+		   returnInputMsg, customerReturn, returnOutputMsg, orderOutputMsg, customerTotal,greetingOutputMsg, 
+		   outputMsg, totalCostOutputMsg,orderInputMsg, customerOrder, colorInputMsg, customerColor, 
+		   productQty, customerQuantity, colorOutputMsg;
+  	  
+  	  FileReader fr = new FileReader("order.txt");
+  	  BufferedReader br = new BufferedReader(fr);
+  	  String name;
+  	  String returning;
+  	  String color;
+  	  String qty;
+  	  String total;
+  	  double dblTotal;
+  	  int intQty;
+  	  
+  	  name = br.readLine();
+  	  returning = br.readLine();
+  	  color = br.readLine();
+  	  qty = br.readLine();
+  	  total = br.readLine();
+  	 
+  	  intQty = Integer.parseInt(qty);
+  	  dblTotal = Double.parseDouble(total);
+  	  
+  	  
+  	 
+  	  // build output strings
+	  nameOutputMsg = "Thanks for your selection " + name + ".\n\n";
+      returnOutputMsg = "Your return customer status is " + returning + ".\n";
+      colorOutputMsg = "You have selected the color" + color + ".\n";
+	  customerTotal = "You have ordered " + qty + ".\n";
+	  totalCostOutputMsg = "Your total order cost is $ " + String.format("%.2f", dblTotal) + "\n";
+	  greetingOutputMsg = "Your order has been processed!" + "\n\n" + "Thank You for Visiting Ulta Beauty!";
+		
+		  // create and display output string
+	  outputMsg = nameOutputMsg + returnOutputMsg + customerTotal + totalCostOutputMsg + greetingOutputMsg;
+	  JOptionPane.showMessageDialog(null, outputMsg);
+
+    }
+
+} 
+//end of class
+
+
+
